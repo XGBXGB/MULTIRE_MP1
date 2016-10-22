@@ -1,3 +1,4 @@
+package model;
 
 /*
  * @(#)Image.java 1.0 03/07/08
@@ -24,6 +25,7 @@ class ImageObject extends JFrame {
 	JTextField jTextArea2 = new JTextField();
 	JPanel mainPanel;
 	int[] histogram;
+	BufferedImage imageObject;
 
 	public void showJPEG() {
 		BufferedImage bi = null;
@@ -53,6 +55,25 @@ class ImageObject extends JFrame {
 	public ImageObject(String path, String fileName) {
 		this.path = path;
 		this.fileName = fileName;
+		
+		String outputFileName = path + File.separatorChar + fileName;
+		System.out.println("OUTPUT: " + outputFileName);
+		try {
+			File file = new File(outputFileName);
+			FileInputStream in = new FileInputStream(file);
+
+			// decodes the JPEG data stream into a BufferedImage
+			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
+			imageObject = decoder.decodeAsBufferedImage();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		if (imageObject == null) {
+			System.out.println("NULL");
+			return;
+		}
+		
 		mainPanel = new JPanel();
 		mainPanel.setLayout(null);
 
@@ -203,7 +224,7 @@ class ImageObject extends JFrame {
 	}
 
 	public static void main(String args[]) {
-
+		
 		System.out.println("Starting Image...");
 		ImageObject mainFrame = new ImageObject("C:\\Users\\xtiangabe\\Desktop", "playlogo2.jpg");
 		mainFrame.initializeHistogram();
