@@ -51,6 +51,8 @@ class ImageObject {
 //		picLabel.setBounds(0, 0, 500, 500);
 //		mainPanel.add(picLabel);
 //	}
+	
+	
 
 	public ImageObject(String path, String fileName) {
 		this.path = path;
@@ -92,6 +94,30 @@ class ImageObject {
 //		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
+	public int[] getHistogram() {
+		return histogram;
+	}
+
+	public void setHistogram(int[] histogram) {
+		this.histogram = histogram;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public BufferedImage getImageObject() {
+		return imageObject;
+	}
+
+	public void setImageObject(BufferedImage imageObject) {
+		this.imageObject = imageObject;
+	}
+
 	public void initializeHistogram() {
 		histogram = new int[159];
 		// gets the RGB and Luv value at x, y
@@ -131,10 +157,10 @@ class ImageObject {
 				accu++;
 			}
 		}
-		for(int i=0; i<159; i++){
-			System.out.println("histogram["+i+"] = "+histogram[i]);
-		}
-		System.out.println("total: "+accu);
+//		for(int i=0; i<159; i++){
+//			System.out.println("histogram["+i+"] = "+histogram[i]);
+//		}
+//		System.out.println("total: "+accu);
 	}
 
 	private static int[][] convertTo2DWithoutUsingGetRGB(BufferedImage image) {

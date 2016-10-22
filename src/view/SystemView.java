@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -26,7 +28,7 @@ import com.sun.image.codec.jpeg.JPEGImageDecoder;
 import controller.Controller;
 
 public class SystemView extends JFrame implements ActionListener{
-	JPanel mainPanel, chosenImagePanel;
+	JPanel mainPanel, chosenImagePanel, resultsPanel;
 	JRadioButton rb_CHmethod, rb_CHwPSmethod, rb_HRwCCmethod, rb_CHwCRmethod;
 	JLabel lbl_methods, lbl_CHmethod, lbl_CHwPSmethod, lbl_HRwCCmethod, lbl_CHwCRmethod, lbl_chosenImage;
 	JButton btn_retrieveImages, btn_chooseImage;
@@ -34,12 +36,19 @@ public class SystemView extends JFrame implements ActionListener{
 	JFileChooser fc_chooser;
 	Controller controller;
 	File file_chosenImage;
+	JScrollPane resultsPanelScroller;
 	
 	public SystemView(){
+		
 		fc_chooser = new JFileChooser("C:\\Users\\xtiangabe\\Desktop");
 		
 		mainPanel = new JPanel();
 		mainPanel.setBounds(0, 0, 600, 600);
+		
+		resultsPanel = new JPanel();
+		resultsPanel.setBackground(Color.RED);
+		resultsPanelScroller = new JScrollPane(resultsPanel);
+		resultsPanelScroller.setBounds(5, 250, 550, 300);
 		
 		rb_CHmethod = new JRadioButton();
 		rb_CHwPSmethod = new JRadioButton();
@@ -90,6 +99,7 @@ public class SystemView extends JFrame implements ActionListener{
 		btn_retrieveImages = new JButton("Retrieve Images");
 		btn_retrieveImages.setBounds(5, 165, 250, 25);
 		
+		mainPanel.add(resultsPanelScroller);
 		mainPanel.add(chosenImagePanel);
 		mainPanel.add(btn_chooseImage);
 		mainPanel.add(tf_imagePath);
