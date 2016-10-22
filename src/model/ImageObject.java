@@ -17,40 +17,40 @@ import java.io.*;
 import javax.swing.*;
 import java.awt.image.ColorModel;
 
-class ImageObject extends JFrame {
+class ImageObject {
 
 	String path;
 	String fileName;
-	JTextField jTextArea1 = new JTextField();
-	JTextField jTextArea2 = new JTextField();
-	JPanel mainPanel;
+//	JTextField jTextArea1 = new JTextField();
+//	JTextField jTextArea2 = new JTextField();
+	//JPanel mainPanel;
 	int[] histogram;
 	BufferedImage imageObject;
 
-	public void showJPEG() {
-		BufferedImage bi = null;
-		String outputFileName = path + File.separatorChar + fileName;
-		System.out.println("OUTPUT: " + outputFileName);
-		try {
-			File file = new File(outputFileName);
-			FileInputStream in = new FileInputStream(file);
-
-			// decodes the JPEG data stream into a BufferedImage
-			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
-			bi = decoder.decodeAsBufferedImage();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		if (bi == null) {
-			System.out.println("NULL");
-			return;
-		}
-
-		JLabel picLabel = new JLabel(new ImageIcon(bi));
-		picLabel.setBounds(0, 0, 500, 500);
-		mainPanel.add(picLabel);
-	}
+//	public void showJPEG() {
+//		BufferedImage bi = null;
+//		String outputFileName = path + File.separatorChar + fileName;
+//		System.out.println("OUTPUT: " + outputFileName);
+//		try {
+//			File file = new File(outputFileName);
+//			FileInputStream in = new FileInputStream(file);
+//
+//			// decodes the JPEG data stream into a BufferedImage
+//			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
+//			bi = decoder.decodeAsBufferedImage();
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
+//
+//		if (bi == null) {
+//			System.out.println("NULL");
+//			return;
+//		}
+//
+//		JLabel picLabel = new JLabel(new ImageIcon(bi));
+//		picLabel.setBounds(0, 0, 500, 500);
+//		mainPanel.add(picLabel);
+//	}
 
 	public ImageObject(String path, String fileName) {
 		this.path = path;
@@ -74,22 +74,22 @@ class ImageObject extends JFrame {
 			return;
 		}
 		
-		mainPanel = new JPanel();
-		mainPanel.setLayout(null);
-
-		mainPanel.setBounds(0, 0, 500, 700);
-		jTextArea1.setBounds(20, 570, 250, 50);
-		jTextArea2.setBounds(20, 510, 250, 50);
-
-		this.add(mainPanel);
-		mainPanel.add(this.jTextArea1);
-		mainPanel.add(this.jTextArea2);
-
-		this.setSize(500, 700);
-		this.setTitle("Image");
-		this.setVisible(true);
-		this.setLayout(null);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+//		mainPanel = new JPanel();
+//		mainPanel.setLayout(null);
+//
+//		mainPanel.setBounds(0, 0, 500, 700);
+//		jTextArea1.setBounds(20, 570, 250, 50);
+//		jTextArea2.setBounds(20, 510, 250, 50);
+//
+//		this.add(mainPanel);
+//		mainPanel.add(this.jTextArea1);
+//		mainPanel.add(this.jTextArea2);
+//
+//		this.setSize(500, 700);
+//		this.setTitle("Image");
+//		this.setVisible(true);
+//		this.setLayout(null);
+//		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
 	public void initializeHistogram() {
@@ -180,55 +180,55 @@ class ImageObject extends JFrame {
 	      return result;
 	   }
 	
-	public void getRGB(int x, int y) {
-		// gets the RGB and Luv value at x, y
-		BufferedImage bi1 = null;
-		int RGB1;
-		int i, j;
-		int totalPixels;
-
-		try {
-			File file = new File(path, fileName);
-			FileInputStream in = new FileInputStream(file);
-
-			// decodes the JPEG data stream into a BufferedImage
-			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
-			bi1 = decoder.decodeAsBufferedImage();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		if (bi1 == null) {
-			System.out.println("Null File");
-			return;
-		}
-
-		totalPixels = bi1.getHeight() * bi1.getWidth();
-		ColorModel CM;
-		CM = bi1.getColorModel();
-		RGB1 = bi1.getRGB(x, y); // get the RGB value at x,y of the image
-
-		double R, G, B;
-		R = CM.getRed(RGB1); // get the 8-bit values of RGB (0-255)
-		G = CM.getGreen(RGB1);
-		B = CM.getBlue(RGB1);
-
-		cieConvert ColorCIE = new cieConvert();
-		ColorCIE.setValues(R / 255.0, G / 255.0, B / 255.0);
-
-		jTextArea2.setText("RGB:(" + Double.toString(R) + "," + Double.toString(G) + "," + Double.toString(B) + ") -> "
-				+ Integer.toString(ColorCIE.IndexOf()));
-		jTextArea1.setText("  = LUV:(\n" + Double.toString(ColorCIE.L) + "," + Double.toString(ColorCIE.u) + ","
-				+ Double.toString(ColorCIE.v) + ")");
-		this.repaint();
-	}
+//	public void getRGB(int x, int y) {
+//		// gets the RGB and Luv value at x, y
+//		BufferedImage bi1 = null;
+//		int RGB1;
+//		int i, j;
+//		int totalPixels;
+//
+//		try {
+//			File file = new File(path, fileName);
+//			FileInputStream in = new FileInputStream(file);
+//
+//			// decodes the JPEG data stream into a BufferedImage
+//			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
+//			bi1 = decoder.decodeAsBufferedImage();
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
+//
+//		if (bi1 == null) {
+//			System.out.println("Null File");
+//			return;
+//		}
+//
+//		totalPixels = bi1.getHeight() * bi1.getWidth();
+//		ColorModel CM;
+//		CM = bi1.getColorModel();
+//		RGB1 = bi1.getRGB(x, y); // get the RGB value at x,y of the image
+//
+//		double R, G, B;
+//		R = CM.getRed(RGB1); // get the 8-bit values of RGB (0-255)
+//		G = CM.getGreen(RGB1);
+//		B = CM.getBlue(RGB1);
+//
+//		cieConvert ColorCIE = new cieConvert();
+//		ColorCIE.setValues(R / 255.0, G / 255.0, B / 255.0);
+//
+//		jTextArea2.setText("RGB:(" + Double.toString(R) + "," + Double.toString(G) + "," + Double.toString(B) + ") -> "
+//				+ Integer.toString(ColorCIE.IndexOf()));
+//		jTextArea1.setText("  = LUV:(\n" + Double.toString(ColorCIE.L) + "," + Double.toString(ColorCIE.u) + ","
+//				+ Double.toString(ColorCIE.v) + ")");
+//		this.repaint();
+//	}
 
 	public static void main(String args[]) {
 		
 		System.out.println("Starting Image...");
 		ImageObject mainFrame = new ImageObject("C:\\Users\\xtiangabe\\Desktop", "playlogo2.jpg");
 		mainFrame.initializeHistogram();
-		mainFrame.showJPEG();
-		mainFrame.getRGB(50, 30);
+//		mainFrame.showJPEG();
+//		mainFrame.getRGB(50, 30);
 	}
 }
