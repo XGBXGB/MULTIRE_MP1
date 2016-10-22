@@ -1,61 +1,24 @@
 package model;
 
-import java.io.File;
-import java.util.ArrayList;
-
-public class CompareHistograms {
-
+public class CCVCompute {
 	
-	public double[] getNormalizedHistogram(int[] histogram, int imageWidth, int imageHeight){
-		double[] nH = new double[159];
+	public static void main(String[] args)
+	{
+		int[][] image = {
+					    {1,1,1,1,1,1,1,2,1,1,1,2},
+					    {2,1,0,0,0,0,1,1,1,2,2,1},
+					    {0,1,0,2,0,2,1,1,1,2,2,1},
+					    {2,1,0,0,0,0,0,1,1,2,2,1},
+					    {1,2,0,0,2,0,0,0,1,0,0,2},
+					    {1,1,1,1,2,2,2,2,2,0,0,0},
+					    {0,0,0,0,1,1,1,2,1,0,0,1},
+					    {1,1,0,2,2,2,1,2,2,0,0,0}
+					    };
 		
-		for(int i=0; i<159; i++){
-			nH[i] = histogram[i]/(imageWidth*imageHeight);
-		}
-		
-		return nH;
+		getCCV4(image, 3, 12, 8, 5);
 	}
 	
-	public double getSimilarity(double sig, int[] histogram1, int imageWidth1, int imageHeight1, int[] histogram2, int imageWidth2, int imageHeight2){
-		double[] nh1 = getNormalizedHistogram(histogram1, imageWidth1, imageHeight1);
-		double[] nh2 = getNormalizedHistogram(histogram2, imageWidth2, imageHeight2);
-		int bigN = 0;
-		
-		double sum = 0;
-		for(int i=0; i<159; i++){
-			if(nh1[i]>sig){
-				bigN++;
-				sum += 1-(Math.abs(nh1[i]-nh2[i])/Math.max(nh1[i], nh2[i]));
-			}
-		}
-		return bigN*sum;
-	}
-	
-	public ArrayList<ResultImageData> compare(double sig, String imagePath1, String imageFilename1, String imagesRepo){
-		ArrayList<ResultImageData> images = new ArrayList();
-		ImageObject basis = new ImageObject(imagePath1, imageFilename1);
-		int basisWidth = basis.getImageObject().getWidth();
-		int basisHeight = basis.getImageObject().getHeight();
-		basis.initializeHistogram();
-		int[] basisHistogram = basis.getHistogram();
-		
-		File folder = new File(imagesRepo);
-		File[] fileList = folder.listFiles();
-		
-		for(int i=0; i<10; i++){
-			ImageObject sample = new ImageObject(imagesRepo, fileList[i].getName());
-			int sampleWidth = sample.getImageObject().getWidth();
-			int sampleHeight = sample.getImageObject().getHeight();
-			sample.initializeHistogram();
-			int[] sampleHistogram = sample.getHistogram();
-			double weight = getSimilarity(sig, basisHistogram, basisWidth, basisHeight, sampleHistogram, sampleWidth, sampleHeight);
-			images.add(new ResultImageData(sample.getFileName(), weight));
-		}
-		
-		return images;
-	}
-
-public static double[] getComparedCCV4(int[][] image1, int[][] image2, int width, int height, int nColors, int threshold)
+	public static double[] getComparedCCV4(int[][] image1, int[][] image2, int width, int height, int nColors, int threshold)
 	{
 		double[][] c1 = getCCV4(image1, nColors, width, height, threshold);
 		double[][] c2 = getCCV4(image2, nColors, width, height, threshold);
@@ -242,6 +205,24 @@ public static double[] getComparedCCV4(int[][] image1, int[][] image2, int width
 			}
 		}
 		
+		//------------------------------PRINTVAL---------------------//
+		
+		for(int y = 0; y < height; y++)
+		{
+			for(int x = 0; x < width; x++)
+			{
+				System.out.printf("%3d ", groups[y][x]);
+			}
+			System.out.println("");
+		}
+		
+		System.out.println("\n");
+		
+		for(int x = 1; x < gNum; x++)
+		{
+			System.out.println(x + " " + cntPerGrp[x][0] + " " + cntPerGrp[x][1]);
+		}
+		
 		
 		//-------------------------COLOR COHERENCE CTR-----------------------//
 		
@@ -259,8 +240,15 @@ public static double[] getComparedCCV4(int[][] image1, int[][] image2, int width
 			else coherence[cntPerGrp[x][0]][1] += cntPerGrp[x][1]; // noncoherent
 		}
 		
+		
+		for(int x = 0; x < nColors; x++)
+		{
+			System.out.println(x + " (" + coherence[x][0] + ","+ coherence[x][1] + ")");
+		}
+		
+		
 		return coherence;
 	}
-
-
+	
+	
 }
