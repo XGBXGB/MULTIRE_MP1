@@ -139,13 +139,33 @@ class ImageObject {
 			System.out.println("Null File");
 			return;
 		}
-		int accu =0;
-		for(int x=0; x<bi1.getWidth(); x++){
-			for(int y=0; y<bi1.getHeight(); y++){
+		
+		/*FIIIIIIIIIIIIIIIIIRSTT*/
+//		for(int x=0; x<bi1.getWidth(); x++){
+//			for(int y=0; y<bi1.getHeight(); y++){
+//				ColorModel CM;
+//				CM = bi1.getColorModel();
+//				RGB1 = bi1.getRGB(x, y); // get the RGB value at x,y of the image
+//
+//				double R, G, B;
+//				R = CM.getRed(RGB1); // get the 8-bit values of RGB (0-255)
+//				G = CM.getGreen(RGB1);
+//				B = CM.getBlue(RGB1);
+//				
+//				cieConvert colorCIE = new cieConvert();
+//				colorCIE.setValues(R / 255.0, G / 255.0, B / 255.0);
+//				histogram[colorCIE.IndexOf()] += 1;
+//			}
+//		}
+		/*FIIIIIIIIIIIIIIIIIRSTT 30239, 39712 30304*/
+
+		/*SECONNNNND*/
+		int[][] rgbVals = convertTo2DWithoutUsingGetRGB(bi1);
+		for(int i=0; i<rgbVals.length; i++){
+			for(int y=0; y<rgbVals[i].length; y++){
+				RGB1 = rgbVals[i][y];
 				ColorModel CM;
 				CM = bi1.getColorModel();
-				RGB1 = bi1.getRGB(x, y); // get the RGB value at x,y of the image
-
 				double R, G, B;
 				R = CM.getRed(RGB1); // get the 8-bit values of RGB (0-255)
 				G = CM.getGreen(RGB1);
@@ -154,17 +174,21 @@ class ImageObject {
 				cieConvert colorCIE = new cieConvert();
 				colorCIE.setValues(R / 255.0, G / 255.0, B / 255.0);
 				histogram[colorCIE.IndexOf()] += 1;
-				accu++;
 			}
 		}
+		/*SECONNNNND 26053 25832 25912*/
+		
+		
 //		for(int i=0; i<159; i++){
 //			System.out.println("histogram["+i+"] = "+histogram[i]);
 //		}
 //		System.out.println("total: "+accu);
 	}
 
-	private static int[][] convertTo2DWithoutUsingGetRGB(BufferedImage image) {
+	private static int[][] convertTo2DWithoutUsingGetRGB(BufferedImage image1) {
 
+		BufferedImage image = new BufferedImage(image1.getWidth(), image1.getHeight(),  
+				BufferedImage.TYPE_3BYTE_BGR);
 	      final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 	      final int width = image.getWidth();
 	      final int height = image.getHeight();

@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +42,7 @@ public class SystemView extends JFrame implements ActionListener{
 	JScrollPane resultsPanelScroller;
 	
 	public SystemView(){
+		Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
 		controller = new Controller();
 		fc_chooser = new JFileChooser("C:\\Users\\xtiangabe\\Desktop");
 		
@@ -50,9 +52,9 @@ public class SystemView extends JFrame implements ActionListener{
 		resultsPanel = new JPanel();
 		resultsPanel.setLayout(null);
 		
-		resultsPanel.setBackground(Color.RED);
 		resultsPanelScroller = new JScrollPane(resultsPanel);
-		resultsPanelScroller.setBounds(5, 250, 550, 300);
+		resultsPanelScroller.setBounds(5, 250, 570, 300);
+		resultsPanelScroller.setBorder(raisedetched);
 		
 		rb_CHmethod = new JRadioButton();
 		rb_CHwPSmethod = new JRadioButton();
@@ -116,7 +118,7 @@ public class SystemView extends JFrame implements ActionListener{
 		mainPanel.add(lbl_HRwCCmethod);
 		mainPanel.add(lbl_CHwCRmethod);
 		
-		Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+		
 		chosenImagePanel.setBorder(raisedetched);
 		chosenImagePanel.setLayout(null);
 		tf_imagePath.setEnabled(false);
@@ -164,7 +166,7 @@ public class SystemView extends JFrame implements ActionListener{
 			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
 			int y = 5;
 			int offset = 0;
-			for(int i=0; i<10; i++){
+			for(int i=0; i<imageResult.size(); i++){
 				if(i%2==0 && i!=0){
 					y+=200;
 					offset = 0;
@@ -178,6 +180,7 @@ public class SystemView extends JFrame implements ActionListener{
 	    		this.repaint();
 	    		offset++;
 			}
+			resultsPanel.setPreferredSize(new Dimension(530, y+220));
 			resultsPanel.repaint();
 			resultsPanelScroller.repaint();
 			resultsPanelScroller.setViewport(resultsPanelScroller.getViewport());
