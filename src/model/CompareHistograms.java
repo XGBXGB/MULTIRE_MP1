@@ -2,6 +2,8 @@ package model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class CompareHistograms {
 
@@ -10,13 +12,17 @@ public class CompareHistograms {
 		double[] nH = new double[159];
 		
 		for(int i=0; i<159; i++){
-			nH[i] = histogram[i]/(imageWidth*imageHeight);
+			nH[i] = (double)histogram[i]/(imageWidth*imageHeight);
+			//System.out.println("sample double value: "+nH[i]+" "+histogram[i]+" "+imageWidth+" "+imageHeight);
 		}
 		
 		return nH;
 	}
 	
 	public double getSimilarity(double sig, int[] histogram1, int imageWidth1, int imageHeight1, int[] histogram2, int imageWidth2, int imageHeight2){
+//		for(int i=0; i<histogram1.length; i++){
+//			System.out.println("hVal: "+histogram1[i]);
+//		}
 		double[] nh1 = getNormalizedHistogram(histogram1, imageWidth1, imageHeight1);
 		double[] nh2 = getNormalizedHistogram(histogram2, imageWidth2, imageHeight2);
 		int bigN = 0;
@@ -28,7 +34,7 @@ public class CompareHistograms {
 				sum += 1-(Math.abs(nh1[i]-nh2[i])/Math.max(nh1[i], nh2[i]));
 			}
 		}
-		return bigN*sum;
+		return sum/bigN;
 	}
 	
 	public ArrayList<ResultImageData> compare(double sig, String imagePath1, String imageFilename1, String imagesRepo){
@@ -42,7 +48,7 @@ public class CompareHistograms {
 		File folder = new File(imagesRepo);
 		File[] fileList = folder.listFiles();
 		
-		for(int i=0; i<10; i++){
+		for(int i=0; i<50; i++){
 			ImageObject sample = new ImageObject(imagesRepo, fileList[i].getName());
 			int sampleWidth = sample.getImageObject().getWidth();
 			int sampleHeight = sample.getImageObject().getHeight();
@@ -51,6 +57,13 @@ public class CompareHistograms {
 			double weight = getSimilarity(sig, basisHistogram, basisWidth, basisHeight, sampleHistogram, sampleWidth, sampleHeight);
 			images.add(new ResultImageData(sample.getFileName(), weight));
 		}
+		
+		Collections.sort(images, new Comparator<ResultImageData>() {
+	        @Override public int compare(ResultImageData img1, ResultImageData img2) {
+	        	return Double.compare(img2.getValue(), img1.getValue());
+	        }
+
+	    });
 		
 		return images;
 	}

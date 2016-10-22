@@ -162,11 +162,11 @@ public class SystemView extends JFrame implements ActionListener{
 	    		chosenImagePanel.add(picLabel);
 	    		this.repaint();
 	        }
-		}else if(e.getSource() == btn_retrieveImages){
+		}else if(e.getSource() == btn_retrieveImages && rb_CHmethod.isSelected()){
 			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
 			int y = 5;
 			int offset = 0;
-			for(int i=0; i<imageResult.size(); i++){
+			for(int i=0; i<50; i++){
 				if(i%2==0 && i!=0){
 					y+=200;
 					offset = 0;
@@ -175,7 +175,7 @@ public class SystemView extends JFrame implements ActionListener{
 				Image sampleImage = getImageFromPathAndFile(imageResult.get(i).getFileName());
 				JLabel samplePic = new JLabel(new ImageIcon(sampleImage));
 				samplePic.setBounds(offset*200+5, y, 195,196);
-				System.out.println("coor: "+(offset*200+5)+ ", "+y);
+				//System.out.println("value: "+imageResult.get(i).getValue());
 	    		resultsPanel.add(samplePic);
 	    		this.repaint();
 	    		offset++;
