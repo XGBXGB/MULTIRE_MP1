@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -26,6 +27,7 @@ import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
 
 import controller.Controller;
+import model.ResultImageData;
 
 public class SystemView extends JFrame implements ActionListener{
 	JPanel mainPanel, chosenImagePanel, resultsPanel;
@@ -39,13 +41,15 @@ public class SystemView extends JFrame implements ActionListener{
 	JScrollPane resultsPanelScroller;
 	
 	public SystemView(){
-		
+		controller = new Controller();
 		fc_chooser = new JFileChooser("C:\\Users\\xtiangabe\\Desktop");
 		
 		mainPanel = new JPanel();
 		mainPanel.setBounds(0, 0, 600, 600);
 		
 		resultsPanel = new JPanel();
+		resultsPanel.setLayout(null);
+		
 		resultsPanel.setBackground(Color.RED);
 		resultsPanelScroller = new JScrollPane(resultsPanel);
 		resultsPanelScroller.setBounds(5, 250, 550, 300);
@@ -98,6 +102,7 @@ public class SystemView extends JFrame implements ActionListener{
 		btn_chooseImage.addActionListener(this);
 		btn_retrieveImages = new JButton("Retrieve Images");
 		btn_retrieveImages.setBounds(5, 165, 250, 25);
+		btn_retrieveImages.addActionListener(this);
 		
 		mainPanel.add(resultsPanelScroller);
 		mainPanel.add(chosenImagePanel);
@@ -156,8 +161,46 @@ public class SystemView extends JFrame implements ActionListener{
 	    		this.repaint();
 	        }
 		}else if(e.getSource() == btn_retrieveImages){
-			
+			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
+			int y = 5;
+			int offset = 0;
+			for(int i=0; i<10; i++){
+				if(i%2==0 && i!=0){
+					y+=200;
+					offset = 0;
+				}
+				
+				Image sampleImage = getImageFromPathAndFile(imageResult.get(i).getFileName());
+				JLabel samplePic = new JLabel(new ImageIcon(sampleImage));
+				samplePic.setBounds(offset*200+5, y, 195,196);
+				System.out.println("coor: "+(offset*200+5)+ ", "+y);
+	    		resultsPanel.add(samplePic);
+	    		this.repaint();
+	    		offset++;
+			}
+			resultsPanel.repaint();
+			resultsPanelScroller.repaint();
+			resultsPanelScroller.setViewport(resultsPanelScroller.getViewport());
 		}
+	}
+	
+	public static Image getImageFromPathAndFile(String fileName){
+		BufferedImage bi = null;
+    	Image rescaled = null;
+    	String outputFileName = "C:\\Users\\xtiangabe\\Desktop\\MP1\\images" + File.separatorChar + fileName;
+    	
+    	try {
+    		File file = new File(outputFileName);
+    		FileInputStream in = new FileInputStream(file);
+
+    		// decodes the JPEG data stream into a BufferedImage
+    		JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
+    		bi = decoder.decodeAsBufferedImage();
+    		rescaled = bi.getScaledInstance(195, 196, Image.SCALE_DEFAULT);
+    	} catch (Exception ex) {
+    		ex.printStackTrace();
+    	}
+    	return rescaled;
 	}
 //	try {
 //	File file = new File(outputFileName);

@@ -1,5 +1,6 @@
 package model;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class CompareHistograms {
@@ -38,8 +39,11 @@ public class CompareHistograms {
 		basis.initializeHistogram();
 		int[] basisHistogram = basis.getHistogram();
 		
-		for(int i=0; i<2000; i++){
-			ImageObject sample = new ImageObject(imagesRepo, i+".jpg");
+		File folder = new File(imagesRepo);
+		File[] fileList = folder.listFiles();
+		
+		for(int i=0; i<10; i++){
+			ImageObject sample = new ImageObject(imagesRepo, fileList[i].getName());
 			int sampleWidth = sample.getImageObject().getWidth();
 			int sampleHeight = sample.getImageObject().getHeight();
 			sample.initializeHistogram();
