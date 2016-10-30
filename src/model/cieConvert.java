@@ -690,4 +690,53 @@ public class cieConvert
 		RGBtoLUV();
 	}
 
+	public double[][] computeLUVSimilarityMatrix()
+	{
+		int size = LuvIndex.length;
+		double distance = 0, max = -1, p = 0.2, threshold;
+		double[][] luvSimilarityMatrix = new double[size][size];
+		
+		initLuvIndex();
+		
+		// compute for distance of every pair of LUV color
+		for( int i = 0; i < size; i++ )
+		{
+			for( int j = 0; j < size; j++ )
+			{
+				// euclidean distance of 2 LUV colors
+				distance = Math.sqrt(Math.pow(LuvIndex[i].L - LuvIndex[j].L, 2) + Math.pow(LuvIndex[i].u - LuvIndex[j].u, 2) + Math.pow(LuvIndex[i].v - LuvIndex[j].v, 2));
+				
+				// get maximum distance
+				max = Double.max(max, distance);
+				
+				// store in matrix
+				luvSimilarityMatrix[i][j] = distance;
+			}
+		}
+		
+		// compute for the threshold to determine if two colors are perceptually similar or not
+		threshold = p * max;
+		
+		System.out.println("Size      : " + size);
+		System.out.println("Max       : " + max);
+		System.out.println("Threshold : " + threshold);
+		
+		// compute for the similarity matrix by taking into consideration the threshold and the max distance taken from above
+		for( int i = 0; i < size; i++ )
+		{
+			for( int j = 0; j < size; j++ )
+			{
+				if( luvSimilarityMatrix[i][j] > threshold )
+				{
+					luvSimilarityMatrix[i][j] = 0;
+				}
+				else
+				{
+					luvSimilarityMatrix[i][j] = 1 - (luvSimilarityMatrix[i][j] / threshold);
+				}
+			}
+		}
+		
+		return luvSimilarityMatrix;
+	}
 }
