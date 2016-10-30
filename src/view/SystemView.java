@@ -30,7 +30,8 @@ import com.sun.image.codec.jpeg.JPEGImageDecoder;
 import controller.Controller;
 import model.ResultImageData;
 
-public class SystemView extends JFrame implements ActionListener{
+public class SystemView extends JFrame implements ActionListener
+{
 	JPanel mainPanel, chosenImagePanel, resultsPanel;
 	JRadioButton rb_CHmethod, rb_CHwPSmethod, rb_HRwCCmethod, rb_CHwCRmethod;
 	JLabel lbl_methods, lbl_CHmethod, lbl_CHwPSmethod, lbl_HRwCCmethod, lbl_CHwCRmethod, lbl_chosenImage;
@@ -41,7 +42,8 @@ public class SystemView extends JFrame implements ActionListener{
 	File file_chosenImage;
 	JScrollPane resultsPanelScroller;
 	
-	public SystemView(){
+	public SystemView()
+	{
 		Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
 		controller = new Controller();
 		fc_chooser = new JFileChooser("C:\\Users\\xtiangabe\\Desktop");
@@ -133,41 +135,56 @@ public class SystemView extends JFrame implements ActionListener{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
-	public static void main(String args[]){
+	public static void main(String args[])
+	{
 		SystemView sv = new SystemView();
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == btn_chooseImage){
-	        fc_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-	        int option = fc_chooser.showOpenDialog(null);
-	        if (option == JFileChooser.APPROVE_OPTION) {
-	        	file_chosenImage = fc_chooser.getSelectedFile();
-	        	tf_imagePath.setText(fc_chooser.getSelectedFile().getAbsolutePath());
-	        	BufferedImage bi = null;
-	        	Image rescaled = null;
-	        	try {
-	        		FileInputStream in = new FileInputStream(file_chosenImage);
-
-	        		// decodes the JPEG data stream into a BufferedImage
-	        		JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
-	        		bi = decoder.decodeAsBufferedImage();
-	        		rescaled = bi.getScaledInstance(195, 196, Image.SCALE_DEFAULT);
-	        	} catch (Exception ex) {
-	        		ex.printStackTrace();
-	        	}
-	        	JLabel picLabel = new JLabel(new ImageIcon(rescaled));
-	    		picLabel.setBounds(3, 2, 195,196);
-	    		chosenImagePanel.add(picLabel);
-	    		this.repaint();
-	        }
-		}else if(e.getSource() == btn_retrieveImages && rb_CHmethod.isSelected()){
+	public void actionPerformed(ActionEvent e) 
+	{
+		if(e.getSource() == btn_chooseImage)
+		{
+			fc_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			int option = fc_chooser.showOpenDialog(null);
+			   
+			if (option == JFileChooser.APPROVE_OPTION) 
+			{
+				file_chosenImage = fc_chooser.getSelectedFile();
+				tf_imagePath.setText(fc_chooser.getSelectedFile().getAbsolutePath());
+				BufferedImage bi = null;
+				Image rescaled = null;
+					
+					try 
+					{
+						FileInputStream in = new FileInputStream(file_chosenImage);
+					
+						// decodes the JPEG data stream into a BufferedImage
+						JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
+						bi = decoder.decodeAsBufferedImage();
+						rescaled = bi.getScaledInstance(195, 196, Image.SCALE_DEFAULT);
+					} 
+					catch (Exception ex) 
+					{
+						ex.printStackTrace();
+					}
+					
+				JLabel picLabel = new JLabel(new ImageIcon(rescaled));
+				picLabel.setBounds(3, 2, 195,196);
+				chosenImagePanel.add(picLabel);
+				this.repaint();
+			}
+		}
+		else if(e.getSource() == btn_retrieveImages && rb_CHmethod.isSelected())
+		{
 			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
 			int y = 5;
 			int offset = 0;
-			for(int i=0; i<50; i++){
-				if(i%2==0 && i!=0){
+			
+			for(int i=0; i<50; i++)
+			{
+				if(i%2==0 && i!=0)
+				{
 					y+=200;
 					offset = 0;
 				}
@@ -176,10 +193,11 @@ public class SystemView extends JFrame implements ActionListener{
 				JLabel samplePic = new JLabel(new ImageIcon(sampleImage));
 				samplePic.setBounds(offset*200+5, y, 195,196);
 				//System.out.println("value: "+imageResult.get(i).getValue());
-	    		resultsPanel.add(samplePic);
-	    		this.repaint();
-	    		offset++;
+				resultsPanel.add(samplePic);
+				this.repaint();
+				offset++;
 			}
+			
 			resultsPanel.setPreferredSize(new Dimension(530, y+220));
 			resultsPanel.repaint();
 			resultsPanelScroller.repaint();
@@ -187,23 +205,27 @@ public class SystemView extends JFrame implements ActionListener{
 		}
 	}
 	
-	public static Image getImageFromPathAndFile(String fileName){
+	public static Image getImageFromPathAndFile(String fileName)
+	{
 		BufferedImage bi = null;
-    	Image rescaled = null;
-    	String outputFileName = "C:\\Users\\xtiangabe\\Desktop\\MP1\\images" + File.separatorChar + fileName;
+		Image rescaled = null;
+		String outputFileName = "C:\\Users\\xtiangabe\\Desktop\\MP1\\images" + File.separatorChar + fileName;
     	
-    	try {
-    		File file = new File(outputFileName);
-    		FileInputStream in = new FileInputStream(file);
-
-    		// decodes the JPEG data stream into a BufferedImage
-    		JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
-    		bi = decoder.decodeAsBufferedImage();
-    		rescaled = bi.getScaledInstance(195, 196, Image.SCALE_DEFAULT);
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    	}
-    	return rescaled;
+		try 
+		{
+	    		File file = new File(outputFileName);
+	    		FileInputStream in = new FileInputStream(file);
+	
+	    		// decodes the JPEG data stream into a BufferedImage
+	    		JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
+	    		bi = decoder.decodeAsBufferedImage();
+	    		rescaled = bi.getScaledInstance(195, 196, Image.SCALE_DEFAULT);
+	    	} 
+		catch (Exception ex) 
+		{
+	    		ex.printStackTrace();
+	    	}
+	    	return rescaled;
 	}
 //	try {
 //	File file = new File(outputFileName);

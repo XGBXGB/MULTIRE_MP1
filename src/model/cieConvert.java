@@ -10,7 +10,8 @@ package model;
 */
 import java.lang.*;
 
-public class cieConvert {
+public class cieConvert 
+{
 
 	public double L, u, v, r, g, b, Index;
 	double X, Y, Z, uPrime, vPrime, un, vn;
@@ -18,18 +19,21 @@ public class cieConvert {
 	public LUVClass LuvIndex[] = new LUVClass[160];
 
 	{
-		for (int i = 0; i < 160; i++) { // creates an instance for all the
-										// LuvIndices
+		for (int i = 0; i < 160; i++) 
+		{ 
+			// creates an instance for all the LuvIndices
 			LuvIndex[i] = new LUVClass();
 		}
 	}
 
-	private class LUVClass { // used to store the Luv value range for every
-								// index
+	private class LUVClass 
+	{ 
+		// used to store the Luv value range for every index
 		public double L, u, v;
 	}
 
-	public void initLuvIndex() {
+	public void initLuvIndex() 
+	{
 		// initializes the LuvIndex
 		// formerly a file named. "Luv.dat"
 
@@ -513,7 +517,8 @@ public class cieConvert {
 
 	}
 
-	public int IndexOf() {
+	public int IndexOf() 
+	{
 		// returns the Luv index based on the L,u,v attributes of the class
 		// quantizes the Luv into 159 colors (0-158)
 
@@ -522,7 +527,6 @@ public class cieConvert {
 		initLuvIndex();
 
 		// find the which index the L value falls
-
 		while (nHi < 159 && L > LuvIndex[nHi].L)
 			nHi++;
 
@@ -532,8 +536,11 @@ public class cieConvert {
 		while (nL < 159 && LuvIndex[nL].L != LuvIndex[nHi].L)
 			nL++;
 
-		for (int i = nL; i < nHi; i++) {
-			if (u <= LuvIndex[i].u) { // within u value range
+		for (int i = nL; i < nHi; i++) 
+		{
+			if (u <= LuvIndex[i].u) 
+			{ 
+				// within u value range
 				if (v <= LuvIndex[i].v) // and within v value range
 					return (i);
 			}
@@ -543,7 +550,8 @@ public class cieConvert {
 
 	}
 
-	public void RGBtoXYZ() {
+	public void RGBtoXYZ() 
+	{
 		// converts the RGB values to XYZ
 		// a necessary step before computing LUV
 
@@ -561,7 +569,8 @@ public class cieConvert {
 
 	}
 
-	public double round(double value, int decimalPlace) {
+	public double round(double value, int decimalPlace) 
+	{
 		// a simple round function, round up to decimalPlace
 
 		double power_of_ten = 1;
@@ -570,7 +579,8 @@ public class cieConvert {
 		return Math.round(value * power_of_ten) / power_of_ten;
 	}
 
-	public void XYZtoLUV() {
+	public void XYZtoLUV() 
+	{
 		// converts the XYZ components into Luv
 
 		double temp = X + 15.0 * Y + 3.0 * Z;
@@ -580,21 +590,26 @@ public class cieConvert {
 		// vMax = 122
 
 		// Set L
-		try {
+		try 
+		{
 			if (Y > 0.008856)
 				L = 116.0 * Math.pow(Y, 0.3333333) - 16.0;
 			else
 				L = 903.3 * Y;
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 		}
 
 		// set u & v
-		if (temp > 0.000001) {
+		if (temp > 0.000001) 
+		{
 			uPrime = 4.0 * X / temp;
 			vPrime = 9.0 * Y / temp;
 			u = 13.0 * L * (uPrime - un);
 			v = 13.0 * L * (vPrime - vn);
-		} else {
+		} else 
+		{
 			u = 0.0;
 			v = 0.0;
 		}
@@ -604,12 +619,14 @@ public class cieConvert {
 		v = round(v, 6);
 	}
 
-	public void RGBtoLUV() {
+	public void RGBtoLUV() 
+	{
 		RGBtoXYZ();
 		XYZtoLUV();
 	}
 
-	public void LUVtoXYZ() {
+	public void LUVtoXYZ() 
+	{
 		// un = 4*Xn/(Xn + 15*Yn + 3*Zn)
 		// vn = 9*Yn/(Xn + 15*Yn + 3*Zn)
 		// These are precomputed and placed in appropriate if-stmt
@@ -629,12 +646,15 @@ public class cieConvert {
 		uPrime = u / (13.0 * L) + un;
 		vPrime = v / (13.0 * L) + vn;
 
-		try {
+		try 
+		{
 			if (L < 7.9996248)
 				Y = L / 903.3;
 			else
 				Y = Math.pow((L + 16.0) / 116.0, 3.0);
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 		}
 
 		X = -(9.0 * Y * uPrime) / ((uPrime - 4.0) * vPrime - uPrime * vPrime);
@@ -642,7 +662,8 @@ public class cieConvert {
 
 	}
 
-	public void XYZtoRGB() {
+	public void XYZtoRGB() 
+	{
 
 		r = 1.910 * X - 0.532 * Y - 0.288 * Z;
 		g = -0.985 * X + 1.999 * Y - 0.028 * Z;
@@ -650,12 +671,14 @@ public class cieConvert {
 
 	}
 
-	public void LUVtoRGB() {
+	public void LUVtoRGB() 
+	{
 		LUVtoXYZ();
 		XYZtoRGB();
 	}
 
-	public void setValues(double nr, double ng, double nb) {
+	public void setValues(double nr, double ng, double nb) 
+	{
 
 		// use this to set the values of the r,g,b components of the class
 		// note: RGB should be normalized to 0-1

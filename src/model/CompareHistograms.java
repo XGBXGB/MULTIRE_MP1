@@ -5,13 +5,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class CompareHistograms {
+public class CompareHistograms 
+{
 
-	
-	public double[] getNormalizedHistogram(int[] histogram, int imageWidth, int imageHeight){
+	public double[] getNormalizedHistogram(int[] histogram, int imageWidth, int imageHeight)
+	{
 		double[] nH = new double[159];
 		
-		for(int i=0; i<159; i++){
+		for(int i=0; i<159; i++)
+		{
 			nH[i] = (double)histogram[i]/(imageWidth*imageHeight);
 			//System.out.println("sample double value: "+nH[i]+" "+histogram[i]+" "+imageWidth+" "+imageHeight);
 		}
@@ -19,7 +21,8 @@ public class CompareHistograms {
 		return nH;
 	}
 	
-	public double getSimilarity(double sig, int[] histogram1, int imageWidth1, int imageHeight1, int[] histogram2, int imageWidth2, int imageHeight2){
+	public double getSimilarity(double sig, int[] histogram1, int imageWidth1, int imageHeight1, int[] histogram2, int imageWidth2, int imageHeight2)
+	{
 //		for(int i=0; i<histogram1.length; i++){
 //			System.out.println("hVal: "+histogram1[i]);
 //		}
@@ -28,8 +31,10 @@ public class CompareHistograms {
 		int bigN = 0;
 		
 		double sum = 0;
-		for(int i=0; i<159; i++){
-			if(nh1[i]>sig){
+		for(int i=0; i<159; i++)
+		{
+			if(nh1[i]>sig)
+			{
 				bigN++;
 				sum += 1-(Math.abs(nh1[i]-nh2[i])/Math.max(nh1[i], nh2[i]));
 			}
@@ -37,7 +42,8 @@ public class CompareHistograms {
 		return sum/bigN;
 	}
 	
-	public ArrayList<ResultImageData> compare(double sig, String imagePath1, String imageFilename1, String imagesRepo){
+	public ArrayList<ResultImageData> compare(double sig, String imagePath1, String imageFilename1, String imagesRepo)
+	{
 		ArrayList<ResultImageData> images = new ArrayList();
 		ImageObject basis = new ImageObject(imagePath1, imageFilename1);
 		int basisWidth = basis.getImageObject().getWidth();
@@ -48,7 +54,8 @@ public class CompareHistograms {
 		File folder = new File(imagesRepo);
 		File[] fileList = folder.listFiles();
 		
-		for(int i=0; i<50; i++){
+		for(int i=0; i<50; i++)
+		{
 			ImageObject sample = new ImageObject(imagesRepo, fileList[i].getName());
 			int sampleWidth = sample.getImageObject().getWidth();
 			int sampleHeight = sample.getImageObject().getHeight();
@@ -58,17 +65,19 @@ public class CompareHistograms {
 			images.add(new ResultImageData(sample.getFileName(), weight));
 		}
 		
-		Collections.sort(images, new Comparator<ResultImageData>() {
-	        @Override public int compare(ResultImageData img1, ResultImageData img2) {
+		Collections.sort(images, new Comparator<ResultImageData>() 
+		{
+	        @Override public int compare(ResultImageData img1, ResultImageData img2) 
+	        {
 	        	return Double.compare(img2.getValue(), img1.getValue());
 	        }
 
-	    });
+		});
 		
 		return images;
 	}
 
-public static double[] getComparedCCV4(int[][] image1, int[][] image2, int width, int height, int nColors, int threshold)
+	public static double[] getComparedCCV4(int[][] image1, int[][] image2, int width, int height, int nColors, int threshold)
 	{
 		double[][] c1 = getCCV4(image1, nColors, width, height, threshold);
 		double[][] c2 = getCCV4(image2, nColors, width, height, threshold);

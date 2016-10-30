@@ -17,7 +17,8 @@ import java.io.*;
 import javax.swing.*;
 import java.awt.image.ColorModel;
 
-class ImageObject {
+class ImageObject 
+{
 
 	String path;
 	String fileName;
@@ -54,24 +55,29 @@ class ImageObject {
 	
 	
 
-	public ImageObject(String path, String fileName) {
+	public ImageObject(String path, String fileName) 
+	{
 		this.path = path;
 		this.fileName = fileName;
 		
 		String outputFileName = path + File.separatorChar + fileName;
 		System.out.println("OUTPUT: " + outputFileName);
-		try {
+		try 
+		{
 			File file = new File(outputFileName);
 			FileInputStream in = new FileInputStream(file);
 
 			// decodes the JPEG data stream into a BufferedImage
 			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
 			imageObject = decoder.decodeAsBufferedImage();
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			ex.printStackTrace();
 		}
 
-		if (imageObject == null) {
+		if (imageObject == null) 
+		{
 			System.out.println("NULL");
 			return;
 		}
@@ -94,55 +100,68 @@ class ImageObject {
 //		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-	public int[] getHistogram() {
+	public int[] getHistogram() 
+	{
 		return histogram;
 	}
 
-	public void setHistogram(int[] histogram) {
+	public void setHistogram(int[] histogram) 
+	{
 		this.histogram = histogram;
 	}
 
-	public String getFileName() {
+	public String getFileName() 
+	{
 		return fileName;
 	}
 
-	public void setFileName(String fileName) {
+	public void setFileName(String fileName) 
+	{
 		this.fileName = fileName;
 	}
 
-	public BufferedImage getImageObject() {
+	public BufferedImage getImageObject() 
+	{
 		return imageObject;
 	}
 
-	public void setImageObject(BufferedImage imageObject) {
+	public void setImageObject(BufferedImage imageObject) 
+	{
 		this.imageObject = imageObject;
 	}
 
-	public void initializeHistogram() {
+	public void initializeHistogram() 
+	{
 		histogram = new int[159];
 		// gets the RGB and Luv value at x, y
 		BufferedImage bi1 = null;
 		int RGB1;
 		int totalPixels;
 
-		try {
+		try 
+		{
 			File file = new File(path, fileName);
 			FileInputStream in = new FileInputStream(file);
 			// decodes the JPEG data stream into a BufferedImage
 			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
 			bi1 = decoder.decodeAsBufferedImage();
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			ex.printStackTrace();
 		}
 
-		if (bi1 == null) {
+		if (bi1 == null) 
+		{
 			System.out.println("Null File");
 			return;
 		}
 		
 		/*FIIIIIIIIIIIIIIIIIRSTT*/
-		for(int x=0; x<bi1.getWidth(); x++){
-			for(int y=0; y<bi1.getHeight(); y++){
+		for(int x=0; x<bi1.getWidth(); x++)
+		{
+			for(int y=0; y<bi1.getHeight(); y++)
+			{
 				ColorModel CM;
 				CM = bi1.getColorModel();
 				RGB1 = bi1.getRGB(x, y); // get the RGB value at x,y of the image
@@ -186,57 +205,64 @@ class ImageObject {
 //		System.out.println("total: "+accu);
 	}
 
-	private static int[][] convertTo2DWithoutUsingGetRGB(BufferedImage image1) {
-
-		BufferedImage image = new BufferedImage(image1.getWidth(), image1.getHeight(),  
-				BufferedImage.TYPE_3BYTE_BGR);
-	      final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+	private static int[][] convertTo2DWithoutUsingGetRGB(BufferedImage image1)
+	{
+		BufferedImage image = new BufferedImage(image1.getWidth(), image1.getHeight(),  BufferedImage.TYPE_3BYTE_BGR);
+	     final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 	      
-	      for(int i=0; i<5; i++){
-	    	  System.out.println("pixel: "+pixels[i]);
-	      }
-	      System.out.println("length "+pixels.length);
-	      final int width = image.getWidth();
-	      final int height = image.getHeight();
-	      final boolean hasAlphaChannel = image.getAlphaRaster() != null;
+	     for(int i=0; i<5; i++)
+	     {
+	     	System.out.println("pixel: "+pixels[i]);
+	     }
+	     System.out.println("length "+pixels.length);
+	     final int width = image.getWidth();
+	     final int height = image.getHeight();
+	     final boolean hasAlphaChannel = image.getAlphaRaster() != null;
 
-	      int[][] result = new int[height][width];
-	      if (hasAlphaChannel) {
-	         final int pixelLength = 4;
-	         for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
-	            int argb = 0;
-	            argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
-	            argb += ((int) pixels[pixel + 1] & 0xff); // blue
-	            argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
-	            argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
-	            result[row][col] = argb; 
+	     int[][] result = new int[height][width];
+	     if (hasAlphaChannel) 
+	     {
+	     	final int pixelLength = 4;
+	     	for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) 
+	     	{
+	     		int argb = 0;
+	     		argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
+	     		argb += ((int) pixels[pixel + 1] & 0xff); // blue
+	     		argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
+	     		argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
+	     		result[row][col] = argb; 
 	            
-	            col++;
-	            if (col == width) {
-	               col = 0;
-	               row++;
-	            }
-	         }
-	      } else {
-	         final int pixelLength = 3;
-	         for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
-	            int argb = 0;
-	            argb += -16777216; // 255 alpha
-	            argb += ((int) pixels[pixel] & 0xff); // blue
-	            argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
-	            argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
-	            result[row][col] = argb;
-	            //System.out.println(argb+" argb");
-	            col++;
-	            if (col == width) {
-	               col = 0;
-	               row++;
-	            }
-	         }
-	      }
+	     		col++;
+	     		if (col == width) 
+	     		{
+	     			col = 0;
+	     			row++;
+	     		}
+	       	}
+	     } 
+	     else 
+	     {	
+			final int pixelLength = 3;
+			for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength)
+			{
+				int argb = 0;
+				argb += -16777216; // 255 alpha
+				argb += ((int) pixels[pixel] & 0xff); // blue
+				argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
+				argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
+				result[row][col] = argb;
+				// System.out.println(argb+" argb");
+				col++;
+				if (col == width)
+				{
+					col = 0;
+					row++;
+				}
+			}
+	     }
 
-	      return result;
-	   }
+	     return result;
+	}
 	
 //	public void getRGB(int x, int y) {
 //		// gets the RGB and Luv value at x, y
@@ -281,7 +307,8 @@ class ImageObject {
 //		this.repaint();
 //	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) 
+	{
 		
 		System.out.println("Starting Image...");
 		ImageObject mainFrame = new ImageObject("C:\\Users\\xtiangabe\\Desktop", "playlogo2.jpg");
