@@ -15,7 +15,34 @@ public class CCVCompute {
 					    {1,1,0,2,2,2,1,2,2,0,0,0}
 					    };
 		
-		getCCV4(image, 3, 12, 8, 5);
+		int[][] image2 = {
+			    {1,1,1,1,1,1,1,2,1,1,1,2},
+			    {2,1,0,0,0,0,1,1,1,2,2,1},
+			    {0,1,0,2,0,2,1,1,1,2,2,1},
+			    {2,1,0,0,0,0,0,1,1,2,2,1},
+			    {1,2,0,0,2,0,0,0,1,0,0,2},
+			    {1,1,1,1,2,2,2,2,2,0,0,0},
+			    {0,0,0,0,1,1,1,2,1,0,0,1},
+			    {1,1,0,2,2,2,1,2,2,0,0,0}
+			    };
+		
+		double[][] c1 = getCCV4(image, 3, 12, 8, 5);
+		double[][] c2 = getCCV4(image2, 3, 12,8,5);
+		//double[] compared = new double[nColors];
+		double compared = 0;
+		
+		for(int x = 0; x < 3; x++)
+		{
+			double co = c1[x][0] - c2[x][0];
+			if(co < 0) co *= -1;
+			double nco = c1[x][1] - c2[x][1];
+			if(nco < 0) nco *= -1;
+			compared += co + nco;
+			
+		}
+		
+		System.out.println("COMP " + compared);
+		//getCCV4(image, 3, 12, 8, 5);
 	}
 	
 	public static double[] getComparedCCV4(int[][] image1, int[][] image2, int width, int height, int nColors, int threshold)

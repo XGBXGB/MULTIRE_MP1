@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.io.*;
+import java.util.Scanner;
+
 import javax.swing.*;
 import java.awt.image.ColorModel;
 
@@ -26,6 +28,7 @@ class ImageObject
 //	JTextField jTextArea2 = new JTextField();
 	//JPanel mainPanel;
 	int[] histogram;
+	int[][] histogram2D;
 	BufferedImage imageObject;
 
 //	public void showJPEG() {
@@ -105,11 +108,22 @@ class ImageObject
 		return histogram;
 	}
 
+	public void setHistogram2D(int[][] histogram) 
+	{
+		this.histogram2D = histogram;
+	}
+
+	public int[][] getHistogram2D() 
+	{
+		return histogram2D;
+	}
+
 	public void setHistogram(int[] histogram) 
 	{
 		this.histogram = histogram;
 	}
 
+	
 	public String getFileName() 
 	{
 		return fileName;
@@ -205,6 +219,94 @@ class ImageObject
 //		System.out.println("total: "+accu);
 	}
 
+	public void initialize2DHistogram(int height, int width) 
+	{
+		histogram2D = new int[height][width];
+		// gets the RGB and Luv value at x, y
+		BufferedImage bi1 = null;
+		int RGB1;
+		int totalPixels;
+
+		try 
+		{
+			File file = new File(path, fileName);
+			FileInputStream in = new FileInputStream(file);
+			// decodes the JPEG data stream into a BufferedImage
+			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
+			bi1 = decoder.decodeAsBufferedImage();
+		} 
+		catch (Exception ex) 
+		{
+			ex.printStackTrace();
+		}
+
+		if (bi1 == null) 
+		{
+			System.out.println("Null File");
+			return;
+		}
+		
+		/*FIIIIIIIIIIIIIIIIIRSTT*/
+		for(int x=0; x<bi1.getHeight(); x++)
+		{
+			for(int y=0; y<bi1.getWidth(); y++)
+			{
+				ColorModel CM;
+				CM = bi1.getColorModel();
+				RGB1 = bi1.getRGB(y, x); // get the RGB value at x,y of the image
+
+				double R, G, B;
+				R = CM.getRed(RGB1); // get the 8-bit values of RGB (0-255)
+				G = CM.getGreen(RGB1);
+				B = CM.getBlue(RGB1);
+				
+				cieConvert colorCIE = new cieConvert();
+				colorCIE.setValues(R / 255.0, G / 255.0, B / 255.0);
+				histogram2D[x][y] = colorCIE.IndexOf();
+			}
+		}
+		
+		/*System.out.println("IMG " + fileName);
+		for(int x = 0 ; x < height; x++)
+		{
+			for(int y = 0; y < width; y++)
+			{
+				System.out.print(histogram2D[x][y] + " ");
+			}
+			System.out.println("");
+		}
+		Scanner sc = new Scanner(System.in);
+		sc.nextLine();*/
+		
+		/*FIIIIIIIIIIIIIIIIIRSTT 30239, 39712 30304*/
+
+		/*SECONNNNND*/
+//		int[][] rgbVals = convertTo2DWithoutUsingGetRGB(bi1);
+//		for(int i=0; i<rgbVals.length; i++){
+//			for(int y=0; y<rgbVals[i].length; y++){
+//				RGB1 = rgbVals[i][y];
+//				ColorModel CM;
+//				CM = bi1.getColorModel();
+//				double R, G, B;
+//				R = CM.getRed(RGB1); // get the 8-bit values of RGB (0-255)
+//				G = CM.getGreen(RGB1);
+//				B = CM.getBlue(RGB1);
+//				//System.out.println(RGB1+" RGBeh: "+R+" "+G+" "+B);
+//				
+//				cieConvert colorCIE = new cieConvert();
+//				colorCIE.setValues(R / 255.0, G / 255.0, B / 255.0);
+//				histogram[colorCIE.IndexOf()] += 1;
+//			}
+//		}
+		/*SECONNNNND 26053 25832 25912*/
+		
+		
+//		for(int i=0; i<159; i++){
+//			System.out.println("histogram["+i+"] = "+histogram[i]);
+//		}
+//		System.out.println("total: "+accu);
+	}
+	
 	private static int[][] convertTo2DWithoutUsingGetRGB(BufferedImage image1)
 	{
 		BufferedImage image = new BufferedImage(image1.getWidth(), image1.getHeight(),  BufferedImage.TYPE_3BYTE_BGR);

@@ -54,7 +54,7 @@ public class CompareHistograms
 		File folder = new File(imagesRepo);
 		File[] fileList = folder.listFiles();
 		
-		for(int i=0; i<50; i++)
+		for(int i=0; i<1703; i++)
 		{
 			ImageObject sample = new ImageObject(imagesRepo, fileList[i].getName());
 			int sampleWidth = sample.getImageObject().getWidth();
@@ -76,12 +76,69 @@ public class CompareHistograms
 		
 		return images;
 	}
+	
+	public int[][] get2DHist(int[] histogram, int height, int width)
+	{
+		int[][] histogram2 = new int[height][width];
+		int index = 0;
+		
+		for(int x = 0; x < height; x++)
+		{
+			for(int y = 0; y < width; y++)
+			{
+				histogram2[x][y] = histogram[index];
+				System.out.println("Index "+index);
+				index++;
+			}
+		}
+		
+		return histogram2;
+		
+	}
+	
+	public ArrayList<ResultImageData> compareCCV4(String imagePath1, String imageFilename1, String imagesRepo, int threshold, int nColors)
+	{
+		ArrayList<ResultImageData> images = new ArrayList<ResultImageData>();
+		ImageObject basis = new ImageObject(imagePath1, imageFilename1);
+		int basisWidth = basis.getImageObject().getWidth();
+		int basisHeight = basis.getImageObject().getHeight();
+		basis.initialize2DHistogram(basisHeight, basisWidth);
+		int[][] basisHistogram = basis.getHistogram2D();
+		//int[][] bHist = this.get2DHist(basisHistogram, basisHeight, basisWidth);
+		
+		File folder = new File(imagesRepo);
+		File[] fileList = folder.listFiles();
+		
+		for(int i=0; i<1703; i++)
+		{
+			ImageObject sample = new ImageObject(imagesRepo, fileList[i].getName());
+			int sampleWidth = sample.getImageObject().getWidth();
+			int sampleHeight = sample.getImageObject().getHeight();
+			sample.initialize2DHistogram(sampleHeight, sampleWidth);
+			int[][] sampleHistogram = sample.getHistogram2D();
+			//int[][] sHist = this.get2DHist(sampleHistogram, sampleHeight, sampleWidth);
+			double weight = getComparedCCV4(basisHistogram, basisWidth, basisHeight, sampleHistogram, sampleWidth, sampleHeight, threshold, nColors);
+			images.add(new ResultImageData(sample.getFileName(), weight));
+		}
+		
+		Collections.sort(images, new Comparator<ResultImageData>() 
+		{
+	        @Override public int compare(ResultImageData img1, ResultImageData img2) 
+	        {
+	        	return Double.compare(img1.getValue(), img2.getValue());
+	        }
 
-	public static double[] getComparedCCV4(int[][] image1, int[][] image2, int width, int height, int nColors, int threshold)
+		});
+		
+		return images;
+	}
+	
+	public static double getComparedCCV4(int[][] image1, int width, int height,int[][] image2, int i2Width, int i2Height, int threshold, int nColors)
 	{
 		double[][] c1 = getCCV4(image1, nColors, width, height, threshold);
-		double[][] c2 = getCCV4(image2, nColors, width, height, threshold);
-		double[] compared = new double[nColors];
+		double[][] c2 = getCCV4(image2, nColors, i2Width, i2Height, threshold);
+		//double[] compared = new double[nColors];
+		double compared = 0;
 		
 		for(int x = 0; x < nColors; x++)
 		{
@@ -89,7 +146,7 @@ public class CompareHistograms
 			if(co < 0) co *= -1;
 			double nco = c1[x][1] - c2[x][1];
 			if(nco < 0) nco *= -1;
-			compared[x] = co + nco;
+			compared += co + nco;
 			
 		}
 		

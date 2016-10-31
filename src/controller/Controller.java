@@ -23,4 +23,10 @@ public class Controller
 	{
 		return comparator.compare(sig, imagePath1, imageFilename1, imagesRepo);
 	}
+
+	public ArrayList<ResultImageData> compareCCV4(String imagePath1, String imageFilename1, String imagesRepo, int threshold, int nColors)
+	{
+		return comparator.compareCCV4(imagePath1, imageFilename1, imagesRepo, threshold, nColors);
+	}
+	
 }

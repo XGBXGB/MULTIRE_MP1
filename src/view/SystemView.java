@@ -46,7 +46,7 @@ public class SystemView extends JFrame implements ActionListener
 	{
 		Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
 		controller = new Controller();
-		fc_chooser = new JFileChooser("C:\\Users\\xtiangabe\\Desktop");
+		fc_chooser = new JFileChooser("D:\\COLLEGE\\MULTIRE\\MP1\\MP1\\images");
 		
 		mainPanel = new JPanel();
 		mainPanel.setBounds(0, 0, 600, 600);
@@ -177,7 +177,7 @@ public class SystemView extends JFrame implements ActionListener
 		}
 		else if(e.getSource() == btn_retrieveImages && rb_CHmethod.isSelected())
 		{
-			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
+			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "D:\\College\\multire\\MP1\\MP1\\images");
 			int y = 5;
 			int offset = 0;
 			
@@ -197,19 +197,46 @@ public class SystemView extends JFrame implements ActionListener
 				this.repaint();
 				offset++;
 			}
-			
 			resultsPanel.setPreferredSize(new Dimension(530, y+220));
 			resultsPanel.repaint();
 			resultsPanelScroller.repaint();
 			resultsPanelScroller.setViewport(resultsPanelScroller.getViewport());
 		}
+		else if(e.getSource() == btn_retrieveImages && rb_HRwCCmethod.isSelected())
+		{
+			ArrayList<ResultImageData> imageResult = controller.compareCCV4(file_chosenImage.getParent(), file_chosenImage.getName(), "D:\\College\\multire\\MP1\\MP1\\images", 6, 159);
+			int y = 5;
+			int offset = 0;
+			
+			for(int i=0; i<50; i++)
+			{
+				if(i%2==0 && i!=0)
+				{
+					y+=200;
+					offset = 0;
+				}
+				
+				Image sampleImage = getImageFromPathAndFile(imageResult.get(i).getFileName());
+				JLabel samplePic = new JLabel(new ImageIcon(sampleImage));
+				samplePic.setBounds(offset*200+5, y, 195,196);
+				//System.out.println("value: "+imageResult.get(i).getValue());
+				resultsPanel.add(samplePic);
+				this.repaint();
+				offset++;
+			}
+			resultsPanel.setPreferredSize(new Dimension(530, y+220));
+			resultsPanel.repaint();
+			resultsPanelScroller.repaint();
+			resultsPanelScroller.setViewport(resultsPanelScroller.getViewport());
+		}	
+		
 	}
 	
 	public static Image getImageFromPathAndFile(String fileName)
 	{
 		BufferedImage bi = null;
 		Image rescaled = null;
-		String outputFileName = "C:\\Users\\xtiangabe\\Desktop\\MP1\\images" + File.separatorChar + fileName;
+		String outputFileName = "D:\\College\\Multire\\MP1\\MP1\\images" + File.separatorChar + fileName;
     	
 		try 
 		{
