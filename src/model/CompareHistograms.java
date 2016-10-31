@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import model.CenteringTest.Data;
+
 public class CompareHistograms 
 {
 
@@ -94,6 +96,46 @@ public class CompareHistograms
 		
 		return histogram2;
 		
+	}
+	
+	public ArrayList<ResultImageData> compareWithCR(int percent, String imagePath1, String imageFilename1, String imagesRepo)
+	{
+		ArrayList<ResultImageData> images = new ArrayList();
+		ImageObject basis = new ImageObject(imagePath1, imageFilename1);
+		int basisWidth = basis.getImageObject().getWidth();
+		int basisHeight = basis.getImageObject().getHeight();
+		basis.initializeHistogramCR(percent);
+		int[] basisHistogramCenter= basis.getHistogramCenter();
+		int[] basisHistogramNonCenter= basis.getHistogramNonCenter();
+		
+		
+		File folder = new File(imagesRepo);
+		File[] fileList = folder.listFiles();
+		
+		for(int i=0; i<1703; i++)
+		{
+			ImageObject sample = new ImageObject(imagesRepo, fileList[i].getName());
+			int sampleWidth = sample.getImageObject().getWidth();
+			int sampleHeight = sample.getImageObject().getHeight();
+			sample.initializeHistogramCR(percent);
+			int[] sampleHistogramCenter = sample.getHistogramCenter();
+			int[] sampleHistogramNonCenter = sample.getHistogramNonCenter();
+			
+			double weightCenter = getSimilarity(0, basisHistogramCenter, basisWidth, basisHeight, sampleHistogramCenter, sampleWidth, sampleHeight);
+			double weightNonCenter = getSimilarity(0, basisHistogramNonCenter, basisWidth, basisHeight, sampleHistogramNonCenter, sampleWidth, sampleHeight);
+			images.add(new ResultImageData(sample.getFileName(), (weightCenter+weightNonCenter)/2.0));
+		}
+		
+		Collections.sort(images, new Comparator<ResultImageData>() 
+		{
+	        @Override public int compare(ResultImageData img1, ResultImageData img2) 
+	        {
+	        	return Double.compare(img2.getValue(), img1.getValue());
+	        }
+
+		});
+		
+		return images;
 	}
 	
 	public ArrayList<ResultImageData> compareCCV4(String imagePath1, String imageFilename1, String imagesRepo, int threshold, int nColors)

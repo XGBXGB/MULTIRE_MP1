@@ -10,10 +10,14 @@ package model;
 import java.awt.*;
 import java.awt.event.*;
 import com.sun.image.codec.jpeg.*;
+
+import model.CenteringTest.Data;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.*;
@@ -30,6 +34,8 @@ class ImageObject
 	int[] histogram;
 	int[][] histogram2D;
 	BufferedImage imageObject;
+	int[] histogramCenter;
+	int[] histogramNonCenter;
 
 //	public void showJPEG() {
 //		BufferedImage bi = null;
@@ -55,9 +61,6 @@ class ImageObject
 //		picLabel.setBounds(0, 0, 500, 500);
 //		mainPanel.add(picLabel);
 //	}
-	
-	
-
 	public ImageObject(String path, String fileName) 
 	{
 		this.path = path;
@@ -111,6 +114,22 @@ class ImageObject
 	public void setHistogram2D(int[][] histogram) 
 	{
 		this.histogram2D = histogram;
+	}
+
+	public int[] getHistogramCenter() {
+		return histogramCenter;
+	}
+
+	public void setHistogramCenter(int[] histogramCenter) {
+		this.histogramCenter = histogramCenter;
+	}
+
+	public int[] getHistogramNonCenter() {
+		return histogramNonCenter;
+	}
+
+	public void setHistogramNonCenter(int[] histogramNonCenter) {
+		this.histogramNonCenter = histogramNonCenter;
 	}
 
 	public int[][] getHistogram2D() 
@@ -217,6 +236,111 @@ class ImageObject
 //			System.out.println("histogram["+i+"] = "+histogram[i]);
 //		}
 //		System.out.println("total: "+accu);
+	}
+	
+	public static int getPositionOffset(int length, int chunkLength) {
+		for (int i = 0; i < length; i++) {
+			if (i == length - (i + chunkLength)) {//6 == 12-(6+0)
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public void initializeHistogramCR(float percent) 
+	{	
+		histogramCenter = new int[159];
+		histogramNonCenter = new int[159];
+		// gets the RGB and Luv value at x, y
+		BufferedImage bi1 = null;
+		int RGB1;
+		int totalPixels;
+
+		try 
+		{
+			File file = new File(path, fileName);
+			FileInputStream in = new FileInputStream(file);
+			// decodes the JPEG data stream into a BufferedImage
+			JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
+			bi1 = decoder.decodeAsBufferedImage();
+		} 
+		catch (Exception ex) 
+		{
+			ex.printStackTrace();
+		}
+
+		if (bi1 == null) 
+		{
+			System.out.println("Null File");
+			return;
+		}
+		
+		int width = bi1.getWidth(), height = bi1.getHeight(), centerW=0, centerH=0;
+		int num = (int) ((width*height)*(percent/100f));
+		int incrementer = 1;
+		if (num % 2 != 0) {
+			incrementer = 2; // only test the odd ones
+		}
+		int big=0,small=0;
+		if(width>height){
+			big=width;
+			small = height;
+		}else{
+			big=height;
+			small=width;
+		}
+		ArrayList<Data> numbers = new ArrayList();
+		for (int i = 1; i <= num / 2; i += incrementer) {
+			if (num % i == 0) {
+				int temp1 = i;
+				int temp2 = num / i;
+				if (temp1 <= small && temp2 <= big) {
+					if(width>height){
+						numbers.add(new Data(temp2, temp1));
+					}else{
+						numbers.add(new Data(temp1, temp2));
+					}
+				}
+			}
+		}
+		
+		int startPosW=0, startPosH=0;
+		for(int i=numbers.size()-1; i>=0; i--){
+			startPosW = getPositionOffset(width, numbers.get(i).getInt1());
+			startPosH = getPositionOffset(height, numbers.get(i).getInt2());
+			if(startPosH!=-1 && startPosW!=-1){
+				centerW = numbers.get(i).getInt1();
+				centerH = numbers.get(i).getInt2();
+				break;
+			}
+		}
+		int endPosW = bi1.getWidth()-startPosW;
+		int endPosH = bi1.getHeight()-startPosH;
+		
+		for(int x=0; x<bi1.getWidth(); x++)
+		{
+			for(int y=0; y<bi1.getHeight(); y++)
+			{
+				ColorModel CM;
+				CM = bi1.getColorModel();
+				RGB1 = bi1.getRGB(x, y); // get the RGB value at x,y of the image
+
+				double R, G, B;
+				R = CM.getRed(RGB1); // get the 8-bit values of RGB (0-255)
+				G = CM.getGreen(RGB1);
+				B = CM.getBlue(RGB1);
+				
+				cieConvert colorCIE = new cieConvert();
+				colorCIE.setValues(R / 255.0, G / 255.0, B / 255.0);
+				
+				
+				if(x>=startPosW && x<endPosW && y>=startPosH && y<endPosH){
+					histogramCenter[colorCIE.IndexOf()] += 1;
+				}else{
+					histogramNonCenter[colorCIE.IndexOf()] += 1;
+				}
+			}
+		}
 	}
 
 	public void initialize2DHistogram(int height, int width) 

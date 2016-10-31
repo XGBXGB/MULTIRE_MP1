@@ -12,8 +12,10 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,12 +43,19 @@ public class SystemView extends JFrame implements ActionListener
 	Controller controller;
 	File file_chosenImage;
 	JScrollPane resultsPanelScroller;
+	JComboBox selectCenterPercent;
 	
 	public SystemView()
 	{
+		String[] percentages = {"50", "75"};
+		selectCenterPercent = new JComboBox(percentages);
+		selectCenterPercent.setBounds(200, 85, 100, 20);
+		selectCenterPercent.setEnabled(false);
+		
 		Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
 		controller = new Controller();
-		fc_chooser = new JFileChooser("D:\\COLLEGE\\MULTIRE\\MP1\\MP1\\images");
+//		fc_chooser = new JFileChooser("D:\\COLLEGE\\MULTIRE\\MP1\\MP1\\images");
+		fc_chooser = new JFileChooser("C:\\Users\\xtiangabe\\Desktop");
 		
 		mainPanel = new JPanel();
 		mainPanel.setBounds(0, 0, 600, 600);
@@ -71,9 +80,13 @@ public class SystemView extends JFrame implements ActionListener
 		radio_btn_group.add(rb_CHwCRmethod);
 		
 		rb_CHmethod.setBounds(5, 25, 20, 20);
+		rb_CHmethod.addActionListener(this);
 		rb_CHwPSmethod.setBounds(5, 45, 20, 20);
+		rb_CHwPSmethod.addActionListener(this);
 		rb_HRwCCmethod.setBounds(5, 65, 20, 20);
+		rb_HRwCCmethod.addActionListener(this);
 		rb_CHwCRmethod.setBounds(5, 85, 20, 20);
+		rb_CHwCRmethod.addActionListener(this);
 		
 		mainPanel.add(rb_CHmethod);
 		mainPanel.add(rb_CHwPSmethod);
@@ -119,7 +132,7 @@ public class SystemView extends JFrame implements ActionListener
 		mainPanel.add(lbl_CHwPSmethod);
 		mainPanel.add(lbl_HRwCCmethod);
 		mainPanel.add(lbl_CHwCRmethod);
-		
+		mainPanel.add(selectCenterPercent);
 		
 		chosenImagePanel.setBorder(raisedetched);
 		chosenImagePanel.setLayout(null);
@@ -177,7 +190,8 @@ public class SystemView extends JFrame implements ActionListener
 		}
 		else if(e.getSource() == btn_retrieveImages && rb_CHmethod.isSelected())
 		{
-			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "D:\\College\\multire\\MP1\\MP1\\images");
+//			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "D:\\College\\multire\\MP1\\MP1\\images");
+			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
 			int y = 5;
 			int offset = 0;
 			
@@ -228,7 +242,51 @@ public class SystemView extends JFrame implements ActionListener
 			resultsPanel.repaint();
 			resultsPanelScroller.repaint();
 			resultsPanelScroller.setViewport(resultsPanelScroller.getViewport());
-		}	
+		}
+		else if(e.getSource().getClass() == rb_CHwCRmethod.getClass())
+		{
+			if(e.getSource() == rb_CHwCRmethod)
+			{
+				selectCenterPercent.setEnabled(true);
+			}else
+			{
+				selectCenterPercent.setEnabled(false);
+			}
+		}		
+		else if(e.getSource() == btn_retrieveImages && rb_CHwCRmethod.isSelected())
+		{
+//			ArrayList<ResultImageData> imageResult = controller.compareWithCR(Integer.parseInt((String)selectCenterPercent.getSelectedItem()), 
+//																		file_chosenImage.getParent(), file_chosenImage.getName(), 
+//																		"D:\\College\\multire\\MP1\\MP1\\images");
+			ArrayList<ResultImageData> imageResult = controller.compareWithCR(Integer.parseInt((String)selectCenterPercent.getSelectedItem()), 
+					file_chosenImage.getParent(), file_chosenImage.getName(), 
+					"C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
+			
+			
+			int y = 5;
+			int offset = 0;
+			
+			for(int i=0; i<50; i++)
+			{
+				if(i%2==0 && i!=0)
+				{
+					y+=200;
+					offset = 0;
+				}
+				
+				Image sampleImage = getImageFromPathAndFile(imageResult.get(i).getFileName());
+				JLabel samplePic = new JLabel(new ImageIcon(sampleImage));
+				samplePic.setBounds(offset*200+5, y, 195,196);
+				//System.out.println("value: "+imageResult.get(i).getValue());
+				resultsPanel.add(samplePic);
+				this.repaint();
+				offset++;
+			}
+			resultsPanel.setPreferredSize(new Dimension(530, y+220));
+			resultsPanel.repaint();
+			resultsPanelScroller.repaint();
+			resultsPanelScroller.setViewport(resultsPanelScroller.getViewport());
+		}
 		
 	}
 	
@@ -236,7 +294,8 @@ public class SystemView extends JFrame implements ActionListener
 	{
 		BufferedImage bi = null;
 		Image rescaled = null;
-		String outputFileName = "D:\\College\\Multire\\MP1\\MP1\\images" + File.separatorChar + fileName;
+//		String outputFileName = "D:\\College\\Multire\\MP1\\MP1\\images" + File.separatorChar + fileName;
+		String outputFileName = "C:\\Users\\xtiangabe\\Desktop\\MP1\\images" + File.separatorChar + fileName;
     	
 		try 
 		{

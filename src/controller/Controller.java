@@ -29,4 +29,9 @@ public class Controller
 		return comparator.compareCCV4(imagePath1, imageFilename1, imagesRepo, threshold, nColors);
 	}
 	
+	public ArrayList<ResultImageData> compareWithCR(int percent, String imagePath1, String imageFilename1, String imagesRepo)
+	{
+		return comparator.compareWithCR(percent, imagePath1, imageFilename1, imagesRepo);
+	}
+	
 }
