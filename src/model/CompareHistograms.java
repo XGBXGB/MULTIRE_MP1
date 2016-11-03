@@ -79,6 +79,78 @@ public class CompareHistograms
 		return images;
 	}
 	
+	// PERCEPTUAL SIMILARITY
+	// Q -> Query -> Chosen Image
+	// S -> Sample -> Database Image/s
+	public double getPerceptualSimilarity( double threshold, int[] histogramQ, int imageWidthQ, int imageHeightQ, int[] histogramS, int imageWidthS, int imageHeightS, double[][] similarityMatrix )
+	{
+		double perceptualSimilarity = 0;
+		double[] nhQ = getNormalizedHistogram(histogramQ, imageWidthQ, imageHeightQ);
+		double[] nhS = getNormalizedHistogram(histogramS, imageWidthS, imageHeightS);
+		
+		for( int i = 0; i < 159; i++ )
+		{
+			if( nhQ[i] > threshold )
+			{
+				perceptualSimilarity += getSimExactCol(nhQ[i], nhS[i]) * (1 + getSimPerCol(i, nhQ[i], nhS, similarityMatrix)) * nhQ[i];
+			}
+		}
+		
+		return perceptualSimilarity;
+	}
+	
+	public double getSimExactCol( double colorQ, double colorS )
+	{
+		return 1 - (Math.abs(colorQ - colorS) / Double.max(colorQ, colorS));
+	}
+	
+	public double getSimPerCol( int index, double histogramQ, double[] nhS, double[][] similarityMatrix )
+	{
+		double perCol = 0;
+		
+		for( int j = 0; j < 159; j++ )
+		{
+			perCol += 1 - (Math.abs(histogramQ - nhS[j]) / Double.max(histogramQ, nhS[j])) * similarityMatrix[index][j];
+		}
+		
+		return perCol;
+	}
+	
+	public ArrayList<ResultImageData> comparePerceptualSimilarity( double threshold, String imagePath1, String imageFilename1, String imagesRepo, double[][] similarityMatrix )
+	{
+		ArrayList<ResultImageData> images = new ArrayList();
+		ImageObject basis = new ImageObject(imagePath1, imageFilename1);
+		int basisWidth = basis.getImageObject().getWidth();
+		int basisHeight = basis.getImageObject().getHeight();
+		basis.initializeHistogram();
+		int[] basisHistogram = basis.getHistogram();
+		
+		File folder = new File(imagesRepo);
+		File[] fileList = folder.listFiles();
+		
+		for(int i=0; i<1703; i++)
+		{
+			ImageObject sample = new ImageObject(imagesRepo, fileList[i].getName());
+			int sampleWidth = sample.getImageObject().getWidth();
+			int sampleHeight = sample.getImageObject().getHeight();
+			sample.initializeHistogram();
+			int[] sampleHistogram = sample.getHistogram();
+			double weight = getPerceptualSimilarity(threshold, basisHistogram, basisWidth, basisHeight, sampleHistogram, sampleWidth, sampleHeight, similarityMatrix);
+			images.add(new ResultImageData(sample.getFileName(), weight));
+		}
+		
+		Collections.sort(images, new Comparator<ResultImageData>() 
+		{
+	        @Override public int compare(ResultImageData img1, ResultImageData img2) 
+	        {
+	        	return Double.compare(img2.getValue(), img1.getValue());
+	        }
+
+		});
+		
+		return images;
+	}
+	
 	public int[][] get2DHist(int[] histogram, int height, int width)
 	{
 		int[][] histogram2 = new int[height][width];

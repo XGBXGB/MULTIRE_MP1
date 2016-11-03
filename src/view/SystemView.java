@@ -44,6 +44,13 @@ public class SystemView extends JFrame implements ActionListener
 	File file_chosenImage;
 	JScrollPane resultsPanelScroller;
 	JComboBox selectCenterPercent;
+
+	static String xgbRepo = "C:\\Users\\xtiangabe\\Desktop\\MP1\\images";
+	static String winonaRepo = "D:\\College\\Multire\\MP1\\MP1\\images";
+	static String kerrbieRepo = "C:\\Users\\Justin\\Documents\\Eclipse\\MULTIRE-MP1\\images";
+	static String imagesRepository = kerrbieRepo;
+	double significance = 0.005;
+	double[][] similarityMatrix;
 	
 	public SystemView()
 	{
@@ -146,6 +153,8 @@ public class SystemView extends JFrame implements ActionListener
 		this.setSize(600,600);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		similarityMatrix = controller.getLUVSimilarityMatrix();
 	}
 	
 	public static void main(String args[])
@@ -156,6 +165,7 @@ public class SystemView extends JFrame implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
+		
 		if(e.getSource() == btn_chooseImage)
 		{
 			fc_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -191,7 +201,35 @@ public class SystemView extends JFrame implements ActionListener
 		else if(e.getSource() == btn_retrieveImages && rb_CHmethod.isSelected())
 		{
 //			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "D:\\College\\multire\\MP1\\MP1\\images");
-			ArrayList<ResultImageData> imageResult = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
+			ArrayList<ResultImageData> imageResult = controller.compare(significance, file_chosenImage.getParent(), file_chosenImage.getName(), imagesRepository);
+			int y = 5;
+			int offset = 0;
+			
+			for(int i=0; i<50; i++)
+			{
+				if(i%2==0 && i!=0)
+				{
+					y+=200;
+					offset = 0;
+				}
+				
+				Image sampleImage = getImageFromPathAndFile(imageResult.get(i).getFileName());
+				JLabel samplePic = new JLabel(new ImageIcon(sampleImage));
+				samplePic.setBounds(offset*200+5, y, 195,196);
+				//System.out.println("value: "+imageResult.get(i).getValue());
+				resultsPanel.add(samplePic);
+				this.repaint();
+				offset++;
+			}
+			resultsPanel.setPreferredSize(new Dimension(530, y+220));
+			resultsPanel.repaint();
+			resultsPanelScroller.repaint();
+			resultsPanelScroller.setViewport(resultsPanelScroller.getViewport());
+		}
+		else if( e.getSource() == btn_retrieveImages && rb_CHwPSmethod.isSelected() )
+		{
+			ArrayList<ResultImageData> imageResult = controller.comparePerceptualSimilarity(significance, file_chosenImage.getParent(), file_chosenImage.getName(), imagesRepository, similarityMatrix);
+//			ArrayList<ResultImageData> imageResultx = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
 			int y = 5;
 			int offset = 0;
 			
@@ -218,7 +256,7 @@ public class SystemView extends JFrame implements ActionListener
 		}
 		else if(e.getSource() == btn_retrieveImages && rb_HRwCCmethod.isSelected())
 		{
-			ArrayList<ResultImageData> imageResult = controller.compareCCV4(file_chosenImage.getParent(), file_chosenImage.getName(), "D:\\College\\multire\\MP1\\MP1\\images", 6, 159);
+			ArrayList<ResultImageData> imageResult = controller.compareCCV4(file_chosenImage.getParent(), file_chosenImage.getName(), imagesRepository, 6, 159);
 			int y = 5;
 			int offset = 0;
 			
@@ -260,7 +298,7 @@ public class SystemView extends JFrame implements ActionListener
 //																		"D:\\College\\multire\\MP1\\MP1\\images");
 			ArrayList<ResultImageData> imageResult = controller.compareWithCR(Integer.parseInt((String)selectCenterPercent.getSelectedItem()), 
 					file_chosenImage.getParent(), file_chosenImage.getName(), 
-					"C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
+					imagesRepository);
 			
 			
 			int y = 5;
@@ -295,7 +333,7 @@ public class SystemView extends JFrame implements ActionListener
 		BufferedImage bi = null;
 		Image rescaled = null;
 //		String outputFileName = "D:\\College\\Multire\\MP1\\MP1\\images" + File.separatorChar + fileName;
-		String outputFileName = "C:\\Users\\xtiangabe\\Desktop\\MP1\\images" + File.separatorChar + fileName;
+		String outputFileName = imagesRepository + File.separatorChar + fileName;
     	
 		try 
 		{

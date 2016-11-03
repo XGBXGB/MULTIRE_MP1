@@ -717,9 +717,9 @@ public class cieConvert
 		// compute for the threshold to determine if two colors are perceptually similar or not
 		threshold = p * max;
 		
-		System.out.println("Size      : " + size);
-		System.out.println("Max       : " + max);
-		System.out.println("Threshold : " + threshold);
+//		System.out.println("Size      : " + size);
+//		System.out.println("Max       : " + max);
+//		System.out.println("Threshold : " + threshold);
 		
 		// compute for the similarity matrix by taking into consideration the threshold and the max distance taken from above
 		for( int i = 0; i < size; i++ )
