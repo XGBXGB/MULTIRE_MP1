@@ -48,7 +48,7 @@ public class SystemView extends JFrame implements ActionListener
 	static String xgbRepo = "C:\\Users\\xtiangabe\\Desktop\\MP1\\images";
 	static String winonaRepo = "D:\\College\\Multire\\MP1\\MP1\\images";
 	static String kerrbieRepo = "C:\\Users\\Justin\\Documents\\Eclipse\\MULTIRE-MP1\\images";
-	static String imagesRepository = kerrbieRepo;
+	static String imagesRepository = xgbRepo;
 	double significance = 0.005;
 	double[][] similarityMatrix;
 	
@@ -173,7 +173,12 @@ public class SystemView extends JFrame implements ActionListener
 			   
 			if (option == JFileChooser.APPROVE_OPTION) 
 			{
+				if(!tf_imagePath.getText().isEmpty()){
+					chosenImagePanel.removeAll();
+				}
+				
 				file_chosenImage = fc_chooser.getSelectedFile();
+				tf_imagePath.setText("");
 				tf_imagePath.setText(fc_chooser.getSelectedFile().getAbsolutePath());
 				BufferedImage bi = null;
 				Image rescaled = null;
@@ -204,8 +209,8 @@ public class SystemView extends JFrame implements ActionListener
 			ArrayList<ResultImageData> imageResult = controller.compare(significance, file_chosenImage.getParent(), file_chosenImage.getName(), imagesRepository);
 			int y = 5;
 			int offset = 0;
-			
-			for(int i=0; i<50; i++)
+			resultsPanel.removeAll();
+			for(int i=0; i<1703; i++)
 			{
 				if(i%2==0 && i!=0)
 				{
@@ -232,8 +237,8 @@ public class SystemView extends JFrame implements ActionListener
 //			ArrayList<ResultImageData> imageResultx = controller.compare(0.05, file_chosenImage.getParent(), file_chosenImage.getName(), "C:\\Users\\xtiangabe\\Desktop\\MP1\\images");
 			int y = 5;
 			int offset = 0;
-			
-			for(int i=0; i<50; i++)
+			resultsPanel.removeAll();
+			for(int i=0; i<1703; i++)
 			{
 				if(i%2==0 && i!=0)
 				{
@@ -259,8 +264,8 @@ public class SystemView extends JFrame implements ActionListener
 			ArrayList<ResultImageData> imageResult = controller.compareCCV4(file_chosenImage.getParent(), file_chosenImage.getName(), imagesRepository, 6, 159);
 			int y = 5;
 			int offset = 0;
-			
-			for(int i=0; i<50; i++)
+			resultsPanel.removeAll();
+			for(int i=0; i<1703; i++)
 			{
 				if(i%2==0 && i!=0)
 				{
@@ -303,8 +308,8 @@ public class SystemView extends JFrame implements ActionListener
 			
 			int y = 5;
 			int offset = 0;
-			
-			for(int i=0; i<50; i++)
+			resultsPanel.removeAll();
+			for(int i=0; i<1703; i++)
 			{
 				if(i%2==0 && i!=0)
 				{
